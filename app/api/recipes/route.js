@@ -1,3 +1,36 @@
+import { cacheLife } from 'next/cache';
+
+async function fetchSpoonacularRecipes(type, sort, cuisine, diet, ingredients) {
+  'use cache';
+  cacheLife('days');
+
+  const apiKey = process.env.SPOONACULAR_API_KEY;
+  const params = new URLSearchParams({
+    apiKey,
+    type,
+    sort: ingredients ? 'min-missing-ingredients' : sort,
+    sortDirection: 'desc',
+    number: '12',
+    addRecipeInformation: 'true',
+    ...(cuisine && { cuisine }),
+    ...(diet && { diet }),
+    ...(ingredients && { includeIngredients: ingredients }),
+  });
+
+  const res = await fetch(
+    `https://api.spoonacular.com/recipes/complexSearch?${params}`
+  );
+  const data = await res.json();
+
+  if (!res.ok) {
+    const err = new Error(data.message || 'Spoonacular API error');
+    err.status = res.status;
+    throw err;
+  }
+
+  return data;
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const type = searchParams.get('type') || 'main course';
@@ -15,32 +48,12 @@ export async function GET(request) {
   }
 
   try {
-    const params = new URLSearchParams({
-      apiKey,
-      type,
-      sort: ingredients ? 'min-missing-ingredients' : sort,
-      sortDirection: 'desc',
-      number: '12',
-      addRecipeInformation: 'true',
-      ...(cuisine && { cuisine }),
-      ...(diet && { diet }),
-      ...(ingredients && { includeIngredients: ingredients }),
-    });
-
-    const res = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?${params}`
-    );
-    const data = await res.json();
-
-    if (!res.ok) {
-      return Response.json(
-        { error: data.message || 'Spoonacular API error', results: [] },
-        { status: res.status }
-      );
-    }
-
+    const data = await fetchSpoonacularRecipes(type, sort, cuisine, diet, ingredients);
     return Response.json(data);
   } catch (err) {
-    return Response.json({ error: err.message, results: [] }, { status: 500 });
+    return Response.json(
+      { error: err.message, results: [] },
+      { status: err.status || 500 }
+    );
   }
 }

@@ -1,5 +1,8 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+vi.mock('next/cache', () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
 import { GET } from '@/app/api/recipes/route.js';
 
 const mockFetch = vi.fn();

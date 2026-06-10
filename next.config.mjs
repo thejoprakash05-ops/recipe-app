@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  cacheComponents: true,
   allowedDevOrigins: ['10.0.0.93'],
   images: {
     remotePatterns: [
