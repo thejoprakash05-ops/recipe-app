@@ -1,4 +1,8 @@
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
 
 function getSkillLevel(recipe) {
   const time = recipe.readyInMinutes || 30;
@@ -27,15 +31,19 @@ export default function RecipeCard({ recipe }) {
   const score = recipe.spoonacularScore || 0;
   const time = recipe.readyInMinutes;
   const cuisine = recipe.cuisines?.[0];
+  const [imgSrc, setImgSrc] = useState(recipe.image || '/recipe-placeholder.svg');
 
   return (
     <Link href={`/recipe/${recipe.id}`}>
       <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-200 cursor-pointer group h-full flex flex-col">
         <div className="relative h-48 overflow-hidden flex-shrink-0">
-          <img
-            src={recipe.image || 'https://via.placeholder.com/300x200?text=Recipe'}
+          <Image
+            src={imgSrc}
             alt={recipe.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgSrc('/recipe-placeholder.svg')}
           />
           {score > 0 && (
             <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">

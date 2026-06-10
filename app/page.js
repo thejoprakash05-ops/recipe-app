@@ -11,7 +11,7 @@ import CameraCapture from '@/components/CameraCapture';
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('dessert');
   const [cuisine, setCuisine] = useState('All');
-  const [diet, setDiet] = useState('all');
+  const [diet, setDiet] = useState('vegetarian');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

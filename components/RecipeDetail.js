@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import NutritionTable from './NutritionTable';
 
 function getSkillLevel(recipe) {
@@ -35,10 +36,13 @@ export default function RecipeDetail({ recipe }) {
     <div className="min-h-screen bg-amber-50">
       {/* Hero */}
       <div className="relative h-72 md:h-96">
-        <img
-          src={recipe.image}
+        <Image
+          src={recipe.image || '/recipe-placeholder.svg'}
           alt={recipe.title}
-          className="w-full h-full object-cover"
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute top-4 left-4">
