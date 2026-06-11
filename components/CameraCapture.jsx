@@ -10,6 +10,11 @@ export default function CameraCapture({ onCapture, onClose }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError('Camera unavailable — open the app on localhost or over HTTPS.');
+      return;
+    }
+
     let active = true;
     navigator.mediaDevices
       .getUserMedia({ video: { facingMode: 'environment' }, audio: false })
@@ -77,7 +82,7 @@ export default function CameraCapture({ onCapture, onClose }) {
                 <line x1="2" y1="2" x2="22" y2="22" />
               </svg>
               <p className="text-sm">{error}</p>
-              <p className="text-xs text-gray-300">Allow camera access in your browser settings and try again.</p>
+              <p className="text-xs text-gray-300">Camera requires HTTPS or localhost. Allow camera access in your browser settings and try again.</p>
             </div>
           )}
         </div>
